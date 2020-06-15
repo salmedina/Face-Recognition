@@ -39,12 +39,12 @@ If an image has multiple faces, the enrolling script will consider the person's 
 Finally to recognize people within an image you can call:
 
 ```
-$ python recognize.py --i <path to image>
+$ python recognize.py -i <path to image>
 ```
 
 Or to recognize people from a file with the list of image paths you may call:
 
 ```
-$ python recognize_list.py --i <path to image list>
+$ python recognize_list.py -i <path to image list>
 ```
 The results will be stored in a numpy file which contains a dictionary with the results per image.
