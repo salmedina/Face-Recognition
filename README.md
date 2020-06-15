@@ -35,7 +35,7 @@ To enroll all the persons in your face databank you need to call the following:
 
 If an image has multiple faces, the enrolling script will consider the person's face the one who is more horizontally aligned to the center of the image.
 
-#### 4. Recognize people
+#### 3. Recognize people
 Finally to recognize people within an image you can call:
 
 ```
