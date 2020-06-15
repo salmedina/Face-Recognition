@@ -1,4 +1,4 @@
-# Face-Recognition
+# Face Recognition Pipeline
 This repository hosts a complete face recognition pipeline using dlib pre-trained models.
 
 ### Installation
