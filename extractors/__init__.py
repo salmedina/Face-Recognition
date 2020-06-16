@@ -1,1 +1,0 @@
-from face_embeddings import extract_face_embeddings
