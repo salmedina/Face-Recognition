@@ -2,9 +2,10 @@ import dlib
 import cv2
 
 face_detector = dlib.get_frontal_face_detector()
-#face_detector = dlib.cnn_face_detection_model_v1("models/mmod_human_face_detector.dat")
+# TODO: uncomment this to enable CNN model
+# face_detector = dlib.cnn_face_detection_model_v1("models/mmod_human_face_detector.dat")
 
-def scale_faces(face_rects, down_scale=1.5):
+def scale_faces(face_rects, down_scale):
     faces = []
     for face in face_rects:
         scaled_face = dlib.rectangle(int(face.left() * down_scale),
@@ -15,10 +16,15 @@ def scale_faces(face_rects, down_scale=1.5):
     return faces
 
 def detect_faces(image, down_scale=1.5):
+    #TODO: verify if normalizing all images to height of 512 px works
+    target_height = 512
+    img_h, img_w, _ = image.shape
+    down_scale = img_h / target_height
     image_scaled = cv2.resize(image, None, fx=1.0/down_scale, fy=1.0/down_scale,
                               interpolation=cv2.INTER_LINEAR)
     faces = face_detector(image_scaled, 0)
-  #  faces = [face.rect for face in faces]
+    # TODO: uncomment this to enable CNN model
+    # faces = [face.rect for face in faces]
     faces = scale_faces(faces, down_scale)
     return faces
 
@@ -33,7 +39,7 @@ if __name__ == "__main__":
     
     for face in faces:
         x,y,w,h = face.left(), face.top(), face.right(), face.bottom()
-        cv2.rectangle(image, (x,y), (w,h), (255,200,150), 2, cv2.CV_AA)
+        cv2.rectangle(image, (x, y), (w, h), (255, 200, 150), 2, cv2.CV_AA)
 
     cv2.imshow("Image", image)
     cv2.waitKey(0)

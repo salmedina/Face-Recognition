@@ -1,21 +1,45 @@
-from extractors import extract_face_embeddings
-from detectors import detect_faces
+import numpy as np
+from face_embeddings import extract_face_embeddings
+from face_detector import detect_faces
 from db import add_embeddings
 import dlib
 
 shape_predictor = dlib.shape_predictor("models/shape_predictor_5_face_landmarks.dat")
 face_recognizer = dlib.face_recognition_model_v1("models/dlib_face_recognition_resnet_model_v1.dat")
 
+def parse_args():
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--dataset", help="Path to dataset to enroll", required=True)
+    parser.add_argument("-e", "--embeddings", help="Path to save embeddings",
+                    default="tmp/face_embeddings.npy")
+    parser.add_argument("-l", "--labels", help="Path to save labels",
+                    default="tmp/labels.pkl")
+    return parser.parse_args()
+
+def get_centered_face_index(image, faces):
+    img_cx = image.shape[1] // 2
+    center_dist_list = np.array([(face.right()+face.left())//2 - img_cx for face in faces])
+    return np.argmin(center_dist_list)
+
 def enroll_face(image, label,
                 embeddings_path="face_embeddings.npy",
-                labels_path="labels.pickle", down_scale=1.0):
+                labels_path="labels.pkl",
+                down_scale=1.0):
 
     faces = detect_faces(image, down_scale)
-    if len(faces)<1:
+    if len(faces) == 1:
+        face = faces[0]
+    if len(faces) < 1:
+        print("[!] Skipping. No faces detected.")
         return False
-    if len(faces)>1:
-        raise ValueError("Multiple faces not allowed for enrolling")
-    face = faces[0]
+    if len(faces) > 1:
+        #TODO: verify with g.t if taking multiple faces increases performance
+        # face = faces[get_centered_face_index(image, faces)]
+        print("[!] Skipping. Multiple faces detected.")
+        return False
+
     face_embeddings = extract_face_embeddings(image, face, shape_predictor,
                                               face_recognizer)
     add_embeddings(face_embeddings, label, embeddings_path=embeddings_path,
@@ -25,18 +49,11 @@ def enroll_face(image, label,
 if __name__ == "__main__":
     import cv2
     import glob
-    import argparse
 
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-d","--dataset", help="Path to dataset to enroll", required=True)
-    ap.add_argument("-e","--embeddings", help="Path to save embeddings",
-                    default="face_embeddings.npy")
-    ap.add_argument("-l","--labels", help="Path to save labels",
-                    default="labels.cpickle")
-
-    args = vars(ap.parse_args())
+    args = parse_args()
+    #TODO: make it work with gif files
     filetypes = ["png", "jpg"]
-    dataset = args["dataset"].rstrip("/")
+    dataset = args.dataset.rstrip("/")
     imPaths = []
 
     for filetype in filetypes:
@@ -46,5 +63,5 @@ if __name__ == "__main__":
         label = path.split("/")[-2]
         image = cv2.imread(path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        enroll_face(image, label, embeddings_path=args["embeddings"],
-                    labels_path=args["labels"])
+        if not enroll_face(image, label, embeddings_path=args.embeddings, labels_path=args.labels):
+            print(path)
