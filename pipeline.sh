@@ -13,7 +13,7 @@ PIPELINE_OUTPUT_PATH=/mnt/Alfheim/Data/OPERA/Venezuela/summer2020/FaceID/output
 python -u download_from_bing.py -i ${NAME_LIST} -n 5 -o ${FACEBANK_DIR}
 
 # Validate the downloaded images
-python -u validate_downloads.py -i ${FACEBANK_DIR} -l ${FACEBANK_LOG_PATH}
+python -u validate_downloads.py -i ${FACEBANK_DIR} -l ${FACEBANK_LOG_PATH} --purge
 
 # First create the reference image database
 python -u enroll.py -d ${FACEBANK_DIR}
