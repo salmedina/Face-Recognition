@@ -1,5 +1,5 @@
 import numpy as np
-import cPickle
+import pickle
 
 def add_embeddings(embedding, label,
                    embeddings_path="face_embeddings.npy",
@@ -7,7 +7,7 @@ def add_embeddings(embedding, label,
     first_time = False
     try:
         embeddings = np.load(embeddings_path)
-        labels = cPickle.load(open(labels_path))
+        labels = pickle.load(open(labels_path, 'rb'))
     except IOError:
         first_time = True
 
@@ -19,7 +19,7 @@ def add_embeddings(embedding, label,
         labels.append(label)
 
     np.save(embeddings_path, embeddings)
-    with open(labels_path, "w") as f:
-        cPickle.dump(labels, f)
+    with open(labels_path, "wb") as f:
+        pickle.dump(labels, f)
 
     return True
