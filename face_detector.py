@@ -38,7 +38,7 @@ if __name__ == "__main__":
     faces = detect_faces(image, down_scale=0.5)
     
     for face in faces:
-        x,y,w,h = face.left(), face.top(), face.right(), face.bottom()
+        x, y, w, h = face.left(), face.top(), face.right(), face.bottom()
         cv2.rectangle(image, (x, y), (w, h), (255, 200, 150), 2, cv2.CV_AA)
 
     cv2.imshow("Image", image)
