@@ -67,7 +67,7 @@ if __name__ == "__main__":
             if frame_video_id != video_id:
                 print('ERROR! frame does not correspond to parent dir')
                 continue
-            image = cv2.imread(video_frame_path)
+            image = cv2.imread(str(video_frame_path))
             if image is None:
                 print(f'ERROR! Unable to open video frame {video_frame_path}')
                 continue
