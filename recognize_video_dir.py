@@ -49,7 +49,7 @@ if __name__ == "__main__":
     face_recognizer = dlib.face_recognition_model_v1("models/"
                                                      "dlib_face_recognition_resnet_model_v1.dat")
 
-    video_id_list = [f.name for f in os.scandir('.') if f.is_dir()]
+    video_id_list = [f.name for f in os.scandir(args.input_dir) if f.is_dir()]
 
     output_dict = dict()
     for video_id in video_id_list:
