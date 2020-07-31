@@ -56,11 +56,11 @@ if __name__ == "__main__":
 
     video_id_list = [f.name for f in os.scandir(args.input_dir) if f.is_dir()]
 
-    output_dict = dict()
+    output_dict = dict(data_dir=args.input_dir, videos=dict())
     for video_id in video_id_list:
         video_path = Path(args.input_dir) / video_id
         if video_id not in output_dict:
-            output_dict[video_id] = dict()
+            output_dict['videos'][video_id] = dict()
         for video_frame_path in video_path.glob(f'*{args.frame_ext}'):
             frame_video_id, frame_id = split_frame_name(video_frame_path.stem)
             frame_id = int(frame_id)
@@ -86,7 +86,7 @@ if __name__ == "__main__":
                                          score=score,
                                          bbox=bbox,
                                          embedding=embedding))
-            output_dict[video_id][frame_id] = face_list
+            output_dict['videos'][video_id][frame_id] = face_list
 
         np.save(args.output_path, output_dict)
         # TODO: remove, used for remote debugging
