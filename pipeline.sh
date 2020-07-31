@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-source activate ~zaid/miniconda2/envs/salvadom_dlib/
+# Environment used in Rabat
+# ~zaid/miniconda2/envs/salvadom_dlib/
 
 # Pipeline input variables
 FACEID_DIR=/data2/salvadom/FaceID
@@ -28,5 +29,3 @@ python -u recognize_list.py -i ${IMAGE_LIST} -o ${REID_RESULTS_PATH}
 # Finally export into the desired format
 mkdir -p ${PIPELINE_OUTPUT_PATH}
 python -u export_results.py -r ${REID_RESULTS_PATH} -d ${DATA_DIR} -o ${PIPELINE_OUTPUT_PATH}
-
-source deactivate
