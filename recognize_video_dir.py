@@ -18,6 +18,11 @@ def parse_args():
     return parser.parse_args()
 
 
+def split_frame_name(frame_name):
+    sep_pos = frame_name.rfind('_')
+    return frame_name[:sep_pos], frame_name[sep_pos+1:]
+
+
 def recognize_face(embedding, embeddings, labels, threshold=0.5):
     distances = np.linalg.norm(embeddings - embedding, axis=1)
     argmin = np.argmin(distances)
@@ -57,7 +62,7 @@ if __name__ == "__main__":
         if video_id not in output_dict:
             output_dict[video_id] = dict()
         for video_frame_path in video_path.glob(f'*{args.frame_ext}'):
-            frame_video_id, frame_id = video_frame_path.stem.split('_')
+            frame_video_id, frame_id = split_frame_name(video_frame_path.stem)
             frame_id = int(frame_id)
             if frame_video_id != video_id:
                 print('ERROR! frame does not correspond to parent dir')
