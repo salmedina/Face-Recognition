@@ -3,13 +3,13 @@
 source activate ~zaid/miniconda2/envs/salvadom_dlib/
 
 # Pipeline input variables
-FACEID_DIR=/mnt/Alfheim/Data/OPERA/Venezuela/summer2020/FaceID
+FACEID_DIR=/data2/salvadom/FaceID
 NAME_LIST=${FACEID_DIR}/ner_per_filtered.lst
 FACEBANK_DIR=${FACEID_DIR}/facebank
 FACEBANK_LOG_PATH=${FACEID_DIR}/empty_dirs.lst
 REID_RESULTS_PATH=./tmp/results.npy
 IMAGE_LIST=${FACEID_DIR}/image.lst
-DATA_DIR=/home/zal/Alfheim/Data/OPERA/Venezuela/summer2020/Venezuela_Data/text/20190926125226
+DATA_DIR=/data2/OPERA/Venezuela_Data/text/20190926125226/raw
 PIPELINE_OUTPUT_PATH=${FACEID_DIR}/output
 
 # Download the reference images

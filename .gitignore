@@ -3,3 +3,5 @@ __init__.py
 __pycache__/
 models/*.dat
 tmp/
+
+github.sh
