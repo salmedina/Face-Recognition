@@ -82,5 +82,7 @@ if __name__ == "__main__":
                                          bbox=bbox,
                                          embedding=embedding))
             output_dict[video_id][frame_id] = face_list
+        # TODO: remove, used for remote debugging
+        break
 
         np.save(args.output_path, output_dict)
