@@ -94,7 +94,6 @@ if __name__ == "__main__":
             output_dict['videos'][video_id][frame_id] = face_list
 
         np.save(args.output_path, output_dict)
-        # TODO: remove, used for remote debugging
-        break
+
     output_dict['end_dt'] = get_now_str()
     np.save(args.output_path, output_dict)
