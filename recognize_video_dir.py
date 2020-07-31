@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     video_id_list = [f.name for f in os.scandir(args.input_dir) if f.is_dir()]
 
-    output_dict = dict(data_dir=args.input_dir, videos=dict(), start_dt=get_now_str)
+    output_dict = dict(data_dir=args.input_dir, videos=dict(), start_dt=get_now_str())
     for video_id in tqdm(video_id_list):
         video_path = Path(args.input_dir) / video_id
         if video_id not in output_dict:
