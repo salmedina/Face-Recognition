@@ -70,4 +70,3 @@ if __name__ == "__main__":
         output_dict[osp.basename(img_path)] = face_list
 
     np.save(args.output_path, output_dict)
-
