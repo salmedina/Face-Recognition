@@ -6,6 +6,8 @@ from bing_image_downloader import downloader as bing
 def main(list_path, output_dir, num_images):
     with open(list_path) as list_file:
         for search_term in [line.strip() for line in list_file.readlines()]:
+            # names list might have two columns: refkb_ID<TAB>person_name
+            search_term = search_term.split('\t', 1)[-1].strip()
             if os.path.exists(os.path.join(output_dir, search_term)):
                 print(f'Skipping {search_term}, path exists')
                 continue
