@@ -13,7 +13,7 @@ def parse_args():
     parser.add_argument('-o', '--output_dir', type=str, help='Path to the directory that will store the output json files')    
     return parser.parse_args()
 
-def build_frame(img_id, face_idx, frame_idx, face_list, names_kbid_dict):
+def build_frame(root_id, img_id, face_idx, frame_idx, face_list, names_kbid_dict):
     frame = {}
 
     face = face_list[face_idx]
@@ -44,7 +44,7 @@ def build_frame(img_id, face_idx, frame_idx, face_list, names_kbid_dict):
                            'bottom': int(bbox[3]),
                            '@type': 'bounding_box',
                            'reference': f'data:{img_id}',
-                           'parent_scope': f'data:{img_id}'}
+                           'parent_scope': f'data:{root_id}'}
     frame['@type'] = 'entity_evidence'
 
     return frame
@@ -88,7 +88,7 @@ def build_doc_json(root, img_filename, face_dict, names_kbid_dict):
     frame_idx = 0
     detected_face = False
     for face_idx in range(len(face_list)):
-        frame = build_frame(img_id, face_idx, frame_idx, face_list, names_kbid_dict)
+        frame = build_frame(root, img_id, face_idx, frame_idx, face_list, names_kbid_dict)
         if len(frame) > 0:
             frames.append(frame)
             frame_idx += 1
