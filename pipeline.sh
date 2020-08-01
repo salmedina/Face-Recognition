@@ -12,13 +12,13 @@ FACEBANK_LOG_PATH=${FACEID_DIR}/empty_dirs.lst
 REID_RESULTS_PATH=./tmp/results.npy
 IMAGE_LIST=${FACEID_DIR}/image.lst
 DATA_DIR=/data2/OPERA/Venezuela_Data/text/20190926125226/raw
-IMAGE_OUTPUT_PATH=${FACEID_DIR}/output
+IMAGE_OUTPUT_PATH=${FACEID_DIR}/output/images
 # Video Processing
 VIDEO_REID_RESULTS_PATH=./tmp/video_results.npy
 VIDEO_FRAMES_DIR=/data2/OPERA/LDC2020E11_AIDA_Phase_2_Practice_Topic_Source_Data_V1.0/data/video_shot_boundaries/representative_frames/
 MSB_PATH=/data2/OPERA/LDC2020E11_AIDA_Phase_2_Practice_Topic_Source_Data_V1.0/docs/video_data.msb
 TAB_PATH=/data2/OPERA/LDC2020E11_AIDA_Phase_2_Practice_Topic_Source_Data_V1.0/docs/parent_children.tab
-VIDEO_OUTPUT_PATH=${FACEID_DIR}/video_output
+VIDEO_OUTPUT_PATH=${FACEID_DIR}/output/videos
 
 # Download the reference images
 echo "*** DOWNLOADING REFERENCE IMAGES ****************"
