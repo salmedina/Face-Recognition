@@ -4,6 +4,18 @@ import os
 import os.path as osp
 from pathlib import Path
 from datetime import datetime
+"""
+input_dir should be video_shot_boundaries/representative_frames/
+which has the following subdirectory structure:
+
+input_dir/
+├── v_8nADSv3YasBhArou/
+│   ├── v_8nADSv3YasBhArou_1.png
+│   ├── v_8nADSv3YasBhArou_2.png
+├── v_aO7nbb3Q7ProAYnG/
+│   ├── v_aO7nbb3Q7ProAYnG_10.png
+│   ├── v_aO7nbb3Q7ProAYnG_11.png
+"""
 
 
 def parse_args():
