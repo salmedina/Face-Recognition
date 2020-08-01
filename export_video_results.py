@@ -51,7 +51,7 @@ def build_frame(parent_id, doc_id, face_idx, frame_idx, face_list, names_kbid_di
 
     frame['@type'] = 'entity_evidence'
     frame['component'] = 'opera.entities.visual.salvador'
-    frame['@id'] = f'data:img-entity-faceid-{doc_id}-cmu-r1-{frame_idx}'
+    frame['@id'] = f'data:img-entity-faceid-{doc_id}_{frame_idx}-cmu-r1-{face_idx}'
     frame['label'] = name
 
     cross_reference_dict = {'@type': 'db_reference',
@@ -71,6 +71,7 @@ def build_frame(parent_id, doc_id, face_idx, frame_idx, face_list, names_kbid_di
                            'right': int(bbox[2]),
                            'bottom': int(bbox[3]),
                            '@type': 'bounding_box',
+                           'keyframe': f'{doc_id}_{frame_idx}',
                            'reference': f'data:{doc_id}',
                            'parent_scope': f'data:{parent_id}'}
     frame['@type'] = 'entity_evidence'
