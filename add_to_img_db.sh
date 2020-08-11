@@ -21,5 +21,6 @@ python -u validate_downloads.py -i $face_embeddings_dir/facebank/ -l $face_embed
 rm -v $face_embeddings_dir/face_embeddings.npy $face_embeddings_dir/labels.pkl
 python -u enroll.py -d $face_embeddings_dir/facebank/ -e $face_embeddings_dir/face_embeddings.npy -l $face_embeddings_dir/labels.pkl
 
-mv $face_embeddings_dir/names_kb.tab $face_embeddings_dir/names_kb.tab.$(date "+%Y-%m-%dT%H:%M:%S")
-cat $names_kb $face_embeddings_dir/names_kb.tab |sort -u >> $face_embeddings_dir/names_kb.tab
+old_names_kb=$face_embeddings_dir/names_kb.tab.$(date "+%Y-%m-%dT%H:%M:%S")
+mv $face_embeddings_dir/names_kb.tab $old_names_kb
+cat $names_kb $old_names_kb |sort -u > $face_embeddings_dir/names_kb.tab
