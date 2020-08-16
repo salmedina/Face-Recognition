@@ -1,6 +1,8 @@
+import sys
 import argparse
 import os
 import shutil
+import traceback
 
 
 def parse_args():
@@ -12,12 +14,17 @@ def parse_args():
 
 
 def main(opts):
-    empty_dirs_list = [os.path.basename(dirpath) for (dirpath, dirnames, filenames) in os.walk(opts.input_dir) if
+    empty_dirs_list = [dirpath for (dirpath, dirnames, filenames) in os.walk(opts.input_dir) if
                        len(dirnames) == 0 and len(filenames) == 0]
 
     if opts.purge:
         for empty_dir_path in empty_dirs_list:
-            shutil.rmtree(empty_dir_path)
+            print(empty_dir_path)
+            try:
+                os.rmdir(empty_dir_path)
+            except Exception:
+                sys.stderr.write("ERROR: Exception occurred while deleting empty dir {0}\n".format(empty_dir_path))
+                traceback.print_exc()
 
     if len(empty_dirs_list) > 0:
         with open(opts.log_path, 'w') as log_file:
