@@ -1,6 +1,8 @@
+import sys
 import argparse
 import os
 from bing_image_downloader import downloader as bing
+import traceback
 
 
 def main(list_path, output_dir, num_images):
@@ -12,7 +14,11 @@ def main(list_path, output_dir, num_images):
                 print(f'Skipping {search_term}, path exists')
                 continue
             print('Search term:', search_term)
-            bing.download(query=search_term, limit=num_images, adult_filter_off='off', output_dir=output_dir)
+            try:
+                bing.download(query=search_term, limit=num_images, adult_filter_off='off', output_dir=output_dir)
+            except Exception:
+                sys.stderr.write("ERROR: Exception occurred while processing name: {0}\n".format(search_term))
+                traceback.print_exc()
 
 
 if __name__ == '__main__':
