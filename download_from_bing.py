@@ -15,7 +15,7 @@ def main(list_path, output_dir, num_images):
                 continue
             print('Search term:', search_term)
             try:
-                bing.download(query=search_term, limit=num_images, adult_filter_off='off', output_dir=output_dir)
+                bing.download(query=search_term, limit=num_images, adult_filter_off='off', output_dir=output_dir, timeout=30, page_counter_limit=5)
             except Exception:
                 sys.stderr.write("ERROR: Exception occurred while processing name: {0}\n".format(search_term))
                 traceback.print_exc()
