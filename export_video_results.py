@@ -5,12 +5,14 @@ import numpy as np
 import os.path as osp
 from glob import glob
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-msb', '--msb_path', type=str, help='Path to the .msb file that has video name and doc id frame level relation')
-    parser.add_argument('-tab', '--tab_path', type=str, help='Path to the .tab file that has the doc id and parent relation')
+    parser.add_argument('-tab', '--tab_path', type=str, help='Path to the parent_children.tab file that has the doc id and parent relation')
     parser.add_argument('-r', '--reid_path', type=str, help='Path to the per video frame face recognition results npy')
     parser.add_argument('-o', '--output_dir', type=str, help='Path to the directory that will store the output json files')    
+    parser.add_argument('-n', '--names_kb', type=str, help='Path to names list (format: refkb_ID<TAB>name)')
     return parser.parse_args()
 
 
@@ -38,17 +40,18 @@ def build_inv_dict_from_tab(tab_path):
     return inv_dict
 
 
-def build_frame(parent_id, doc_id, face_idx, frame_idx, face_list):
+def build_frame(parent_id, doc_id, face_idx, frame_idx, face_list, names_kbid_dict):
     frame = {}
 
     face = face_list[face_idx]
     name, score, bbox = face['label'], float(face['score']), face['bbox']
+    name = name.strip()
 
-    kbid = f"comexkb:{name.lower().replace(' ', '_')}"
+    kbid = names_kbid_dict.get(name, f"comexkb:{name.lower().replace(' ', '_')}")
 
     frame['@type'] = 'entity_evidence'
     frame['component'] = 'opera.entities.visual.salvador'
-    frame['@id'] = f'data:img-entity-faceid-{doc_id}-cmu-r1-{frame_idx}'
+    frame['@id'] = f'data:img-entity-faceid-{doc_id}_{frame_idx}-cmu-r1-{face_idx}'
     frame['label'] = name
 
     cross_reference_dict = {'@type': 'db_reference',
@@ -68,6 +71,7 @@ def build_frame(parent_id, doc_id, face_idx, frame_idx, face_list):
                            'right': int(bbox[2]),
                            'bottom': int(bbox[3]),
                            '@type': 'bounding_box',
+                           'keyframe': f'{doc_id}_{frame_idx}',
                            'reference': f'data:{doc_id}',
                            'parent_scope': f'data:{parent_id}'}
     frame['@type'] = 'entity_evidence'
@@ -75,7 +79,7 @@ def build_frame(parent_id, doc_id, face_idx, frame_idx, face_list):
     return frame
 
 
-def build_doc_json(root_id, parent_id, doc_id, video_name, face_dict):
+def build_doc_json(root_id, parent_id, doc_id, video_name, face_dict, names_kbid_dict):
     if video_name not in face_dict['videos']:
         return {}
 
@@ -114,7 +118,7 @@ def build_doc_json(root_id, parent_id, doc_id, video_name, face_dict):
     detected_face = False
     for frame_idx, face_list in face_dict['videos'][video_name].items():
         for face_idx in range(len(face_list)):
-            frame = build_frame(parent_id, doc_id, face_idx, frame_idx, face_list)
+            frame = build_frame(parent_id, doc_id, face_idx, frame_idx, face_list, names_kbid_dict)
             if len(frame) > 0:
                 frames.append(frame)
                 detected_face = True
@@ -127,16 +131,29 @@ def build_doc_json(root_id, parent_id, doc_id, video_name, face_dict):
     return data
 
 
+def load_names_kb(names_kb_file):
+    names_kbid_dict = {}
+    if not names_kb_file:
+        return names_kbid_dict
+    with open(names_kb_file, 'r') as f:
+        for line in f:
+            fields = line.split('\t', 1)
+            if len(fields) == 2:
+                names_kbid_dict[fields[1].strip()] = "refkb:" + fields[0].strip()
+    return names_kbid_dict
+
+
 def main(opts):
     face_dict = np.load(opts.reid_path, allow_pickle=True).item()
     videoname_docid_dict = build_inv_dict_from_msb(opts.msb_path)
     docid_parentid_dict = build_inv_dict_from_tab(opts.tab_path)
+    names_kbid_dict = load_names_kb(opts.names_kb)
 
     for video_name in face_dict['videos'].keys():
         doc_id = videoname_docid_dict[video_name]
         parent_id = docid_parentid_dict[doc_id]
         root_id = parent_id
-        doc_json = build_doc_json(root_id, parent_id, doc_id, video_name, face_dict)
+        doc_json = build_doc_json(root_id, parent_id, doc_id, video_name, face_dict, names_kbid_dict)
         if not doc_json:
             continue
         output_path = osp.join(opts.output_dir, f'{doc_id}.csr.json')

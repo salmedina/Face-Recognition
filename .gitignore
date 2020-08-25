@@ -5,3 +5,4 @@ models/*.dat
 tmp/
 
 github.sh
+/face_embeddings_dir/
