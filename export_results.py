@@ -7,7 +7,7 @@ from glob import glob
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--doc_dir', type=str, help='Path to the directory that contains the docuemnts')
+    parser.add_argument('-d', '--doc_dir', type=str, help='Path to the directory that contains the documents')
     parser.add_argument('-r', '--reid_path', type=str, help='Path to the per image face recognition results')
     parser.add_argument('-o', '--output_dir', type=str, help='Path to the directory that will store the output json files')    
     return parser.parse_args()
