@@ -4,6 +4,20 @@ import os
 import os.path as osp
 from pathlib import Path
 from datetime import datetime
+import sys
+import traceback
+"""
+input_dir should be video_shot_boundaries/representative_frames/
+which has the following subdirectory structure:
+
+input_dir/
+├── v_8nADSv3YasBhArou/
+│   ├── v_8nADSv3YasBhArou_1.png
+│   ├── v_8nADSv3YasBhArou_2.png
+├── v_aO7nbb3Q7ProAYnG/
+│   ├── v_aO7nbb3Q7ProAYnG_10.png
+│   ├── v_aO7nbb3Q7ProAYnG_11.png
+"""
 
 
 def parse_args():
@@ -67,31 +81,35 @@ if __name__ == "__main__":
         if video_id not in output_dict:
             output_dict['videos'][video_id] = dict()
         for video_frame_path in video_path.glob(f'*{args.frame_ext}'):
-            frame_video_id, frame_id = split_frame_name(video_frame_path.stem)
-            frame_id = int(frame_id)
-            if frame_video_id != video_id:
-                print('ERROR! frame does not correspond to parent dir')
-                continue
-            image = cv2.imread(str(video_frame_path))
-            if image is None:
-                print(f'ERROR! Unable to open video frame {video_frame_path}')
-                continue
-            image_original = image.copy()
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            try:
+                frame_video_id, frame_id = split_frame_name(video_frame_path.stem)
+                frame_id = int(frame_id)
+                if frame_video_id != video_id:
+                    print('ERROR! frame does not correspond to parent dir')
+                    continue
+                image = cv2.imread(str(video_frame_path))
+                if image is None:
+                    print(f'ERROR! Unable to open video frame {video_frame_path}')
+                    continue
+                image_original = image.copy()
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-            faces = detect_faces(image)
+                faces = detect_faces(image)
 
-            face_list = []
-            for face in faces:
-                embedding = extract_face_embeddings(image, face, shape_predictor, face_recognizer)
-                label, score = recognize_face(embedding, embeddings, labels)
-                bbox = (face.left(), face.top(), face.right(), face.bottom())
-                if label != "Unknown":
-                    face_list.append(dict(label=label,
-                                         score=score,
-                                         bbox=bbox,
-                                         embedding=embedding))
-            output_dict['videos'][video_id][frame_id] = face_list
+                face_list = []
+                for face in faces:
+                    embedding = extract_face_embeddings(image, face, shape_predictor, face_recognizer)
+                    label, score = recognize_face(embedding, embeddings, labels)
+                    bbox = (face.left(), face.top(), face.right(), face.bottom())
+                    if label != "Unknown":
+                        face_list.append(dict(label=label,
+                                             score=score,
+                                             bbox=bbox,
+                                             embedding=embedding))
+                output_dict['videos'][video_id][frame_id] = face_list
+            except Exception:
+                sys.stderr.write("ERROR: Exception occurred while processing {0}\n".format(str(video_frame_path)))
+                traceback.print_exc()
 
         np.save(args.output_path, output_dict)
 
