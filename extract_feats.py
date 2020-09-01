@@ -3,6 +3,7 @@ import numpy as np
 import os.path as osp
 import sys
 import traceback
+from pathlib import Path
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -12,12 +13,18 @@ def parse_args():
     return parser.parse_args()
 
 
+def extract_face_embeddings(image, face_rect, shape_predictor, face_recognizer):
+    shape = shape_predictor(image, face_rect)
+    face_embedding = face_recognizer.compute_face_descriptor(image, shape)
+    face_embedding = [x for x in face_embedding]
+    face_embedding = np.array(face_embedding, dtype="float32")[np.newaxis, :]
+    return face_embedding
+
+
 if __name__ == "__main__":
     import cv2
     import argparse
     from face_detector import detect_faces
-    from face_embeddings import extract_face_embedding
-    import pickle
     import dlib
     from tqdm import tqdm
 
@@ -48,7 +55,12 @@ if __name__ == "__main__":
                 embedding = extract_face_embeddings(image, face, shape_predictor, face_recognizer)
                 face_list.append(dict(bbox=(face.left(), face.top(), face.right(), face.bottom()),
                                       embedding=embedding))
-            output_dict[osp.basename(img_path)] = face_list
+            if len(face_list) < 1:
+                continue
+
+            print(Path(img_path).name, len(face_list))
+            output_dict[Path(img_path).name] = dict(num_faces=len(face_list),
+                                                       faces=face_list)
         except Exception:
             sys.stderr.write("ERROR: Exception occurred while processing {0}\n".format(img_path))
             traceback.print_exc()
