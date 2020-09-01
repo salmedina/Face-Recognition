@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def extract_face_embeddings(image, face_rect, shape_predictor, face_recognizer):
     shape = shape_predictor(image, face_rect)
     face_embedding = face_recognizer.compute_face_descriptor(image, shape)
