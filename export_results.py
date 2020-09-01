@@ -1,6 +1,5 @@
 import argparse
 import json
-import pickle as pk
 import numpy as np
 import os.path as osp
 from glob import glob
